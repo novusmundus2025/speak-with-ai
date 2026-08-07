@@ -1,0 +1,25 @@
+{
+  "package_id": "ai.mundusx.speakwithai",
+  "edition": "202601",
+  "name": "Speak with AI",
+  "version": "0.1.0",
+  "min_app_version": "2.2.6",
+  "min_sdk_version": "0.0.13",
+  "entrypoint": "index.html",
+  "permissions": [
+    {
+      "name": "network",
+      "desc": "Send conversation audio to MundusX for translation and reply suggestions.",
+      "whitelist": [
+        "https://mundusx.ai",
+        "https://huggingface.co",
+        "https://cdn-lfs.hf.co",
+        "https://cas-bridge.xethub.hf.co"
+      ]
+    }
+  ],
+  "supported_languages": [
+    "en",
+    "de"
+  ]
+}

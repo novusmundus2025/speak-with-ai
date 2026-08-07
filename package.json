@@ -1,0 +1,21 @@
+{
+  "name": "speak-with-ai",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "pack:g2": "npm run build && evenhub pack app.json dist -o speak-with-ai.ehpk"
+  },
+  "dependencies": {
+    "@evenrealities/even_hub_sdk": "0.0.13",
+    "@huggingface/transformers": "^3.8.1"
+  },
+  "devDependencies": {
+    "@evenrealities/evenhub-cli": "0.1.13",
+    "typescript": "5.9.3",
+    "vite": "8.2.1"
+  }
+}

@@ -98,11 +98,15 @@ export class ConversationController {
 
   swipe(direction: -1 | 1): void {
     if (this.state.phase === 'summary' && direction === 1) {
-      this.setState({ ...this.state, phase: 'replies', replyIndex: 0 });
+      this.setState({ ...this.state, phase: 'replies', replyIndex: 1 });
       return;
     }
     if (this.state.phase !== 'replies' || !this.state.result) return;
-    const replyIndex = Math.max(0, Math.min(2, this.state.replyIndex + direction));
+    if (this.state.replyIndex === 1 && direction === -1) {
+      this.setState({ ...this.state, phase: 'summary', replyIndex: 0 });
+      return;
+    }
+    const replyIndex = Math.max(1, Math.min(2, this.state.replyIndex + direction));
     this.setState({ ...this.state, replyIndex });
   }
 

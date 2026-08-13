@@ -47,7 +47,7 @@ root.innerHTML = `
           <button id="swipe-down" type="button"><span>↓</span><small>Swipe down</small></button>
         </div>
         <button class="reset" id="reset-button" type="button">Double-press · reset</button>
-        <p class="hint" id="interaction-hint">Press once to begin. This browser uses a German dinner-invitation sample.</p>
+        <p class="hint" id="interaction-hint">Press once to begin a real conversation using this laptop's microphone.</p>
       </aside>
     </section>
 
@@ -77,13 +77,13 @@ const labels: Record<AppState['phase'], string> = {
 };
 
 const hints: Record<AppState['phase'], string> = {
-  idle: 'Press once to begin. This browser uses a German dinner-invitation sample.',
-  listening: 'The G2 microphone captures 16 kHz PCM audio. Press when the other person finishes.',
-  transcribing: 'Whisper is converting the G2 audio to German text locally on this phone.',
+  idle: 'Press once to begin. On a laptop, allow microphone access when asked.',
+  listening: 'Speak German near the laptop microphone. Press when the other person finishes.',
+  transcribing: 'Whisper is converting the captured audio to German text locally on this device.',
   processing: 'MundusX is extracting the translation, topic, and reply intentions.',
   summary: 'First understand what the message is about. Swipe down to see suggested replies.',
   replies: 'Swipe between positive, contextual, and negative. Press to enlarge the selected German reply.',
-  speak: 'Read the large German sentence aloud. Press to return to the reply list.',
+  speak: 'The selected German reply is spoken through the laptop speakers. Press to return.',
   error: 'Press to try the conversation again.',
 };
 

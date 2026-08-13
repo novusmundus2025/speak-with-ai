@@ -8,7 +8,7 @@ import {
   waitForEvenAppBridge,
   type EvenAppBridge,
 } from '@evenrealities/even_hub_sdk';
-import { hudText } from './hud';
+import { hudPageCount, hudText } from './hud';
 import { analyzeConversation } from './mundusx';
 import { GermanTranscriber } from './transcription';
 import type { AppState } from './types';
@@ -19,7 +19,7 @@ const HUD_CONTAINER_NAME = 'conversation-hud';
 export type StateListener = (state: AppState) => void;
 
 export class ConversationController {
-  private state: AppState = { phase: 'idle', result: null, replyIndex: 0 };
+  private state: AppState = { phase: 'idle', result: null, replyIndex: 0, pageIndex: 0 };
   private listeners = new Set<StateListener>();
   private bridge: EvenAppBridge | null = null;
   private pcmChunks: Uint8Array[] = [];
@@ -83,7 +83,7 @@ export class ConversationController {
       return;
     }
     if (this.state.phase === 'summary') {
-      this.setState({ ...this.state, phase: 'replies', replyIndex: 0 });
+      this.setState({ ...this.state, phase: 'replies', replyIndex: 1, pageIndex: 0 });
       return;
     }
     if (this.state.phase === 'replies') {
@@ -97,17 +97,27 @@ export class ConversationController {
   }
 
   swipe(direction: -1 | 1): void {
+    const pageCount = hudPageCount(this.state);
+    if (direction === 1 && this.state.pageIndex < pageCount - 1) {
+      this.setState({ ...this.state, pageIndex: this.state.pageIndex + 1 });
+      return;
+    }
+    if (direction === -1 && this.state.pageIndex > 0) {
+      this.setState({ ...this.state, pageIndex: this.state.pageIndex - 1 });
+      return;
+    }
     if (this.state.phase === 'summary' && direction === 1) {
-      this.setState({ ...this.state, phase: 'replies', replyIndex: 1 });
+      this.setState({ ...this.state, phase: 'replies', replyIndex: 1, pageIndex: 0 });
       return;
     }
     if (this.state.phase !== 'replies' || !this.state.result) return;
     if (this.state.replyIndex === 1 && direction === -1) {
-      this.setState({ ...this.state, phase: 'summary', replyIndex: 0 });
+      const summaryState = { ...this.state, phase: 'summary' as const, replyIndex: 0, pageIndex: 0 };
+      this.setState({ ...summaryState, pageIndex: hudPageCount(summaryState) - 1 });
       return;
     }
     const replyIndex = Math.max(1, Math.min(2, this.state.replyIndex + direction));
-    this.setState({ ...this.state, replyIndex });
+    this.setState({ ...this.state, replyIndex, pageIndex: 0 });
   }
 
   async reset(): Promise<void> {
@@ -115,12 +125,12 @@ export class ConversationController {
     await this.stopBrowserMicrophone();
     window.speechSynthesis?.cancel();
     this.pcmChunks = [];
-    this.setState({ phase: 'idle', result: null, replyIndex: 0 });
+    this.setState({ phase: 'idle', result: null, replyIndex: 0, pageIndex: 0 });
   }
 
   private async startListening(): Promise<void> {
     this.pcmChunks = [];
-    this.setState({ phase: 'listening', result: null, replyIndex: 0 });
+    this.setState({ phase: 'listening', result: null, replyIndex: 0, pageIndex: 0 });
     if (this.bridge) {
       const opened = await this.bridge.audioControl(true, AudioInputSource.Glasses);
       if (!opened) this.fail('The glasses microphone could not be opened.');
@@ -149,7 +159,7 @@ export class ConversationController {
         replyCount: 3,
         priorTurns: [],
       });
-      this.setState({ phase: 'summary', result, replyIndex: 0 });
+      this.setState({ phase: 'summary', result, replyIndex: 0, pageIndex: 0 });
     } catch (error) {
       this.fail(error instanceof Error ? error.message : 'Unexpected MundusX error');
     } finally {
@@ -217,7 +227,7 @@ export class ConversationController {
   }
 
   private fail(errorMessage: string): void {
-    this.setState({ phase: 'error', result: null, replyIndex: 0, errorMessage });
+    this.setState({ phase: 'error', result: null, replyIndex: 0, pageIndex: 0, errorMessage });
   }
 
   private setState(state: AppState): void {

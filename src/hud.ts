@@ -17,14 +17,24 @@ export function hudText(state: AppState): string {
   const neutral = state.result.replies.find((reply) => reply.kind === 'continuation');
   const negative = state.result.replies.find((reply) => reply.kind === 'alternative');
 
+  if (state.phase === 'summary') {
+    return [
+      `DE>${compact(state.result.heard)}`,
+      `EN>${compact(state.result.translation)}`,
+      '',
+      `+DE>${compact(supportive?.text || '')}`,
+      `+EN>${compact(supportive?.meaning || '')}`,
+      '',
+      '↓  # / -',
+    ].join('\n');
+  }
+
+  const reply = state.replyIndex === 1 ? neutral : negative;
+  const marker = state.replyIndex === 1 ? '#' : '-';
   return [
-    `Q ${compact(state.result.heard)}`,
-    `  ${compact(state.result.translation)}`,
-    `+ ${compact(supportive?.text || '')}`,
-    `  ${compact(supportive?.meaning || '')}`,
-    `- ${compact(negative?.text || '')}`,
-    `  ${compact(negative?.meaning || '')}`,
-    `# ${compact(neutral?.text || '')}`,
-    `  ${compact(neutral?.meaning || '')}`,
+    `${marker}DE>${compact(reply?.text || '')}`,
+    `${marker}EN>${compact(reply?.meaning || '')}`,
+    '',
+    '↑  ↓',
   ].join('\n');
 }

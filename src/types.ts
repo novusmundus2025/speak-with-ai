@@ -43,5 +43,6 @@ export interface AppState {
   phase: AppPhase;
   result: ConversationResult | null;
   replyIndex: number;
+  pageIndex: number;
   errorMessage?: string;
 }

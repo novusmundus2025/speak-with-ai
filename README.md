@@ -63,7 +63,3 @@ npm.cmd run pack:g2
 ```
 
 The packaged `.ehpk` file is ignored by Git.
-
-## License
-
-Project-owned source code and documentation are licensed under [Apache License 2.0](LICENSE). Third-party components, data, and assets retain their own licenses and notices.
